@@ -4,4 +4,5 @@
     <color name="actionbar_background">@color/primary_color</color>
     <color name="secondary_color">#ecf0f1</color>
     <color name="button_color">@color/primary_color</color>
+    <color name="window_bg">@color/primary_color</color>
 </resources>

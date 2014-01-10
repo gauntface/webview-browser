@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+       <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <item name="android:buttonStyle">@style/MyButton</item>
+
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+
+        <item name="android:windowBackground">@color/window_bg</item>
+    </style>
+</resources>
