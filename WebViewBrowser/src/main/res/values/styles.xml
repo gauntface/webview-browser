@@ -27,5 +27,6 @@
     <!-- Button styles -->
     <style name="MyButton" parent="@android:style/Widget.Holo.Light.Button">
         <item name="android:background">@color/button_color</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 </resources>

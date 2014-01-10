@@ -1,0 +1,8 @@
+/**task buildWebApp(type: Exec) {
+    executable = "grunt"
+    args = ["build"]
+}**/
+
+task buildWebApp(type: Exec) {
+
+}

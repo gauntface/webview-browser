@@ -1,1 +1,2 @@
 include ':WebViewBrowser', ':GauntFaceHelperLib'
+include ':BrowserPages'

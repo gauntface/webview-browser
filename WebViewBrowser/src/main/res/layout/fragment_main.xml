@@ -29,9 +29,21 @@
 
     </LinearLayout>
 
-    <co.uk.gauntface.android.gauntfacehelperlib.views.BasicWebView
-        android:id="@+id/fragment_main_webview"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <co.uk.gauntface.android.gauntfacehelperlib.views.BasicWebView
+            android:id="@+id/fragment_main_webview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <co.uk.gauntface.android.webviewbrowser.views.NoTouchWebView
+            android:id="@+id/fragment_main_message_webview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
 
 </LinearLayout>

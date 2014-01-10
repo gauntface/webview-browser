@@ -1,23 +1,40 @@
 package co.uk.gauntface.android.gauntfacehelperlib.views;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.JsonReader;
+import android.util.JsonToken;
+import android.util.Log;
+import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import java.io.IOException;
+import java.io.StringReader;
 
 /**
  * Created by mattgaunt on 08/01/2014.
  */
 public class BasicWebView extends WebView {
 
-    public BasicWebView(Context context) {
+    /**public BasicWebView(Context context) {
         this(context, null);
-    }
+    }**/
 
+    /**
+     * Normally I would use this(content, attrs, 0) but that caused some focusing issues.
+     * hence using super to ensure we are using sane defaults
+     *
+     * @param context
+     * @param attrs
+     */
     public BasicWebView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs);
+
+        initialiseDefaults();
     }
 
     public BasicWebView(Context context, AttributeSet attrs, int defStyle) {
@@ -50,5 +67,70 @@ public class BasicWebView extends WebView {
         }
 
         setWebViewClient(new WebViewClient());
+    }
+
+    public void loadJavascript(String javascript) {
+        loadJavascript(javascript, null);
+    }
+
+    /**
+     * This method is designed to hide how Javascript is injected into
+     * the WebView.
+     *
+     * In KitKat the new evaluateJavascript method has the ability to
+     * give you access to any return values via the ValueCallback object.
+     *
+     * The String passed into onReceiveValue() is a JSON string, so if you
+     * execute a javascript method which return a javascript object, you can
+     * parse it as valid JSON. If the method returns a primitive value, it
+     * will be a valid JSON object, but you should use the setLenient method
+     * to true and then you can use peek() to test what kind of object it is,
+     *
+     * @param javascript
+     */
+    public void loadJavascript(String javascript, final OnJSReturnValue listener) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            // In KitKat+ you should use the evaluateJavascript method
+            evaluateJavascript(javascript, new ValueCallback<String>() {
+                @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+                @Override
+                public void onReceiveValue(String s) {
+                    if(listener == null) {
+                        return;
+                    }
+
+                    JsonReader reader = new JsonReader(new StringReader(s));
+
+                    // Must set lenient to parse single values
+                    reader.setLenient(true);
+
+                    try {
+                        if (reader.peek() != JsonToken.NULL) {
+                            listener.onReturnValue(reader);
+                        } else {
+                            listener.onReturnValue(null);
+                        }
+                    } catch (IOException e) {
+                        Log.e("TAG", "MainActivity: IOException", e);
+                        try {
+                            reader.close();
+                        } catch (IOException exception) {
+                            // NOOP
+                        }
+                    }
+                }
+            });
+        } else {
+            /**
+             * For pre-KitKat+ you should use loadUrl("javascript:<JS Code Here>");
+             * To then call back to Java you would need to use addJavascriptInterface()
+             * and have your JS call the interface
+             **/
+            loadUrl("javascript:" + javascript);
+        }
+    }
+
+    public interface OnJSReturnValue {
+        public void onReturnValue(JsonReader reader);
     }
 }

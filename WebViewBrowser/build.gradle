@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.6.+'
+        classpath 'com.android.tools.build:gradle:0.7.+'
     }
 }
 apply plugin: 'android'
@@ -27,8 +27,14 @@ android {
         }
     }
     productFlavors {
-        defaultFlavor {
+        staticbuild {
             proguardFile 'proguard-rules.txt'
+            packageName "co.uk.gauntface.android.webviewbrowser"
+        }
+
+        liveserver {
+            proguardFile 'proguard-rules.txt'
+            packageName "co.uk.gauntface.android.webviewbrowser.liveserver"
         }
     }
 }
@@ -36,4 +42,22 @@ android {
 dependencies {
     compile 'com.android.support:appcompat-v7:18.0.+'
     compile project(':GauntFaceHelperLib')
+}
+
+task copyWebApplication(type: Copy) {
+    from '../BrowserPages/dist'
+    into 'src/main/assets/www'
+}
+
+task deleteWebApplication(type: Delete) {
+    delete 'src/main/assets/www'
+}
+
+copyWebApplication.dependsOn ':BrowserPages:buildWebApp'
+copyWebApplication.dependsOn deleteWebApplication
+
+android.applicationVariants.all { variant ->
+    if(variant.productFlavors[0].name != "liveserver") {
+        tasks.getByPath(":${project.name}:assemble${variant.name.capitalize()}").dependsOn copyWebApplication
+    }
 }
