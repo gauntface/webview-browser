@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,8 +6,10 @@
     tools:context="co.uk.gauntface.android.webviewbrowser.MainActivity$PlaceholderFragment">
 
     <LinearLayout
+        android:id="@+id/fragment_main_url_input_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:background="@color/secondary_color">
@@ -32,7 +34,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_below="@id/fragment_main_url_input_container"
+        android:layout_alignParentBottom="true">
 
         <co.uk.gauntface.android.gauntfacehelperlib.views.BasicWebView
             android:id="@+id/fragment_main_webview"
@@ -46,4 +49,14 @@
 
     </RelativeLayout>
 
-</LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/fragment_main_fullscreen_video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        android:visibility="invisible">
+
+    </FrameLayout>
+
+</RelativeLayout>

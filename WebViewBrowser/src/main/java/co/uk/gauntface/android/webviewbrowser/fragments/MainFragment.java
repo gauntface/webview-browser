@@ -1,6 +1,7 @@
 package co.uk.gauntface.android.webviewbrowser.fragments;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,10 +9,12 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import co.uk.gauntface.android.gauntfacehelperlib.helper.GFFragment;
@@ -26,6 +29,8 @@ public class MainFragment extends GFFragment implements View.OnClickListener {
     private static final int ABOUT = 2;
     private static final int NO_PAGE = -1;
 
+    private FrameLayout mFullscreenContainer;
+    private WebChromeClient.CustomViewCallback mCustomViewCallback;
     private EditText mEditText;
     private Button mLinkGoButton;
     private WebView mWebView;
@@ -51,6 +56,19 @@ public class MainFragment extends GFFragment implements View.OnClickListener {
         mLinkGoButton = (Button) view.findViewById(R.id.fragment_main_go_btn);
         mWebView = (WebView) view.findViewById(R.id.fragment_main_webview);
         mMessageWebView = (BasicWebView) view.findViewById(R.id.fragment_main_message_webview);
+        mFullscreenContainer = (FrameLayout) view.findViewById(R.id.fragment_main_fullscreen_video);
+
+        mFullscreenContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mCustomViewCallback != null) {
+                    mCustomViewCallback.onCustomViewHidden();
+                    mFullscreenContainer.setVisibility(View.INVISIBLE);
+
+                    mCustomViewCallback = null;
+                }
+            }
+        });
 
         mLinkGoButton.setOnClickListener(this);
         mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -98,6 +116,42 @@ public class MainFragment extends GFFragment implements View.OnClickListener {
                 }
             }
 
+        });
+
+        mWebView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public Bitmap getDefaultVideoPoster() {
+                Log.v("VideoViewWebView", "getDefaultVideoPoster()");
+                Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                        R.drawable.ic_launcher);
+                return icon;
+            }
+
+            @Override
+            public View getVideoLoadingProgressView() {
+                Log.v("VideoViewWebView", "getVideoLoadingProgressView()");
+                return null;
+            }
+
+            @Override
+            public void onShowCustomView(View view, CustomViewCallback callback) {
+                super.onShowCustomView(view, callback);
+                Log.v("VideoViewWebView", "onShowCustomView()");
+                if (view instanceof FrameLayout){
+                    FrameLayout frame = (FrameLayout) view;
+
+                    mCustomViewCallback = callback;
+
+                    mFullscreenContainer.removeAllViews();
+                    mFullscreenContainer.addView(frame);
+                    mFullscreenContainer.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onHideCustomView() {
+                Log.v("VideoViewWebView", "onHideCustomView()");
+            }
         });
     }
 

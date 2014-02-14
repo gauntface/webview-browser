@@ -4,5 +4,11 @@
 }**/
 
 task buildWebApp(type: Exec) {
+    workingDir '/Users/mattgaunt/Programming/Workspace/webview-browser/BrowserPages/'
 
+    //on windows:
+    commandLine 'grunt.exe', 'build'
+
+    //on linux
+    commandLine 'grunt', 'build'
 }

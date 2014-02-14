@@ -7,6 +7,8 @@ import android.util.AttributeSet;
 import android.util.JsonReader;
 import android.util.JsonToken;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -19,6 +21,8 @@ import java.io.StringReader;
  * Created by mattgaunt on 08/01/2014.
  */
 public class BasicWebView extends WebView {
+
+    private GestureDetector mGestureDetector;
 
     /**public BasicWebView(Context context) {
         this(context, null);
@@ -67,10 +71,22 @@ public class BasicWebView extends WebView {
         }
 
         setWebViewClient(new WebViewClient());
+
+        // Handle Double Click
+        mGestureDetector = new GestureDetector(getContext(), new DoubleTapListener());
     }
 
     public void loadJavascript(String javascript) {
         loadJavascript(javascript, null);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        if(mGestureDetector.onTouchEvent(e)) {
+            return true;
+        }
+
+        return super.onTouchEvent(e);
     }
 
     /**
@@ -132,5 +148,23 @@ public class BasicWebView extends WebView {
 
     public interface OnJSReturnValue {
         public void onReturnValue(JsonReader reader);
+    }
+
+    private class DoubleTapListener extends GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return false;
+        }
+        // event when double tap occurs
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            float x = e.getX();
+            float y = e.getY();
+
+            BasicWebView.this.zoomIn();
+
+            return true;
+        }
     }
 }
